@@ -1,7 +1,6 @@
 import cgi
+import webapp2
 from google.appengine.api import users
-from google.appengine.ext import webapp
-from google.appengine.ext.webapp.util import run_wsgi_app
 from google.appengine.ext import db
 
 
@@ -10,7 +9,7 @@ class Todo(db.Model):
   createdate = db.DateTimeProperty(auto_now_add=True)
   deletedate = db.DateTimeProperty()
 
-class TodoPage(webapp.RequestHandler):
+class TodoPage(webapp2.RequestHandler):
   warning = None
   def get(self): # delete request
     if cgi.escape(self.request.get('op')) == "delete":
@@ -51,6 +50,6 @@ class TodoPage(webapp.RequestHandler):
   </form>""")
     self.response.out.write("</body></html>")
 
-application = webapp.WSGIApplication(
+application = webapp2.WSGIApplication(
   [('/', TodoPage)],
   debug=True)
