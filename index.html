@@ -1,0 +1,17 @@
+<html><head></head><body>
+  {% if warning %}
+    <span style="color: red; ">{{ warning }}</span>
+  {% endif %}
+  <ul>
+  {% for todo in todos %}
+    <li>
+      {{ todo.text }}
+      <a href="?op=delete&key={{ todo.key() }}">(-)</a>
+    </li>
+  {% endfor %}
+  </ul>
+  <form method="post" action="/">
+    <input size="50" name="text" />
+    <input type="submit" name="op" value="add">
+  </form>
+</body></html>

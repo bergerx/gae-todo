@@ -6,5 +6,8 @@ threadsafe: true
 
 handlers:
 - url: /.*
-  script: todo.application
+  script: todo.app
 
+libraries:
+- name: jinja2
+  version: latest

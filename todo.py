@@ -2,7 +2,11 @@ import cgi
 import webapp2
 from google.appengine.api import users
 from google.appengine.ext import db
+import jinja2
+import os
 
+jinja_environment = jinja2.Environment(
+  loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
 
 class Todo(db.Model):
   text = db.StringProperty()
@@ -12,44 +16,29 @@ class Todo(db.Model):
 class TodoPage(webapp2.RequestHandler):
   warning = None
   def get(self): # delete request
+    user = users.get_current_user()
+    if not user:
+      self.redirect(users.create_login_url(self.request.uri))
     if cgi.escape(self.request.get('op')) == "delete":
-      db.get(db.Key(self.request.get('key'))).delete()
-      self.warning = "Removed record!"
-    self.view()
+      key_name = self.request.get('key')
+      key = db.Key(key_name)
+      db_key = db.get(key)
+      db_key.delete()
+      self.redirect('/')
+    template_values = {
+      'todos': Todo.all(),
+      'warning': self.warning,
+      }
+    template = jinja_environment.get_template('index.html')
+    self.response.out.write(template.render(template_values))
 
   def post(self): # add request
     # buraya post isleme verileri gelecek
     if cgi.escape(self.request.get('op')) == "add":
       todo = Todo(text = cgi.escape(self.request.get('text')))
       todo.put()
-      self.warning = "Added record"
-    self.view()
+    self.redirect('/')
 
-  def login(self):
-    user = users.get_current_user()
-    if not user:
-      self.redirect(users.create_login_url(self.request.uri))
-    return user
-
-  def view(self):
-    #user = self.login()
-    self.response.headers['Content-Type'] = 'text/html'
-    self.response.out.write("<html><head></head><body>")
-    if self.warning:
-      self.response.out.write("""<font color="red">%s</font>""" % self.warning)
-    todos = Todo.all()
-    self.response.out.write("<ul>")
-    for todo in todos:
-      self.response.out.write("<li>%s "% todo.text)
-      self.response.out.write("""<a href="?op=delete&key=%s">(-)</a>""" % str(todo.key()))
-    self.response.out.write("</ul>")
-    self.response.out.write("""
-  <form method="post" action="/">
-    <input size="50" name="text" />
-    <input type="submit" name="op" value="add">
-  </form>""")
-    self.response.out.write("</body></html>")
-
-application = webapp2.WSGIApplication(
+app = webapp2.WSGIApplication(
   [('/', TodoPage)],
   debug=True)
