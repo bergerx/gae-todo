@@ -54,9 +54,3 @@ class TodoPage(webapp.RequestHandler):
 application = webapp.WSGIApplication(
   [('/', TodoPage)],
   debug=True)
-
-def main():
-  run_wsgi_app(application)
-
-if __name__ == "__main__":
-  main()

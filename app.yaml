@@ -1,9 +1,10 @@
 application: bekir-todo
 version: 1
-runtime: python
+runtime: python27
 api_version: 1
+threadsafe: true
 
 handlers:
 - url: /.*
-  script: todo.py
+  script: todo.application
 
