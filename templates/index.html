@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<html lang="en"><head>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
   <title>Simple Todo List</title>
   <link href="/css/bootstrap.css" rel="stylesheet" media="screen">
 </head>
-<body class="span10"><div class="span10 container">
+<body class="span10">
+<div class="span10 container">
   <script src="/js/jquery-latest.js"></script>
   <script src="/js/bootstrap.js"></script>
   <h1>Todo List</h1>
@@ -17,10 +19,28 @@
   {% endfor %}
 
   <!-- Show add form -->
-  <form class="navbar-form pull-left" method="post" action="/">
-    <input type="text" size="50" class="input-large" name="text">
-    <input type="submit" name="op" class="btn" value="add">
+  <form id="add-form" method="post" action="/">
+    <fieldset>
+      <legend class="default-hidden hide">Add New Todo Item</legend>
+      <input id="addbox" type="text" size="50" class="input"
+             name="text" placeholder="Write new todo item here">
+      <span class="help-block"></span>
+      <textarea class="default-hidden hide input-xxlarge" placeholder="More details about item."
+                name="details"></textarea>
+      <span class="help-block"></span>
+      <button class="default-hidden hide btn" type="submit" name="op"  value="add">Submit</button>
+      <button id="cancel-btn" class="default-hidden hide btn" type="reset" name="op"  value="add">Cancel</button>
+    </fieldset>
   </form>
+
+  <script>
+    $('#addbox').focusin(function () {
+      $('#add-form .default-hidden').slideDown('slow');
+    });
+    $('#cancel-btn').click(function () {
+      $('#add-form .default-hidden').slideUp('slow');
+    })
+  </script>
 
   <!-- Show todo items -->
   {% if todos.count() %}
@@ -40,4 +60,6 @@
       There is no items in todo list!
     </div>
   {% endif %}
-<div class="container"></body></html>
+
+</body>
+</html>
