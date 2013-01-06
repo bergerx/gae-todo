@@ -52,12 +52,13 @@ class TodoPage(BaseHandler):
       todo_text = todo.text
       todo.delete()
       self.session.add_flash('Deleted: %s' % todo_text)
-      return self.redirect('/')
+      self.redirect('/')
+      return
     template_values = {
       'todos': Todo.all(),
       'flashes': self.session.get_flashes(),
       }
-    self.response.out.write(self.render_response('index.html', **template_values))
+    return self.render_response('index.html', **template_values)
 
   def post(self): # add request
     if cgi.escape(self.request.get('op')) == "add":

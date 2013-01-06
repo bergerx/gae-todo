@@ -1,19 +1,43 @@
-<html><head></head><body>
+<!DOCTYPE html>
+<html lang="en"><head>
+  <title>Simple Todo List</title>
+  <link href="/css/bootstrap.css" rel="stylesheet" media="screen">
+</head>
+<body class="span10"><div class="span10 container">
+  <script src="/js/jquery-latest.js"></script>
+  <script src="/js/bootstrap.js"></script>
+  <h1>Todo List</h1>
+
+  <!-- Show flashes -->
   {% for flash, level in flashes %}
-    {% if not loop.first %}<br>{% endif %}
-    <span style="color: red; ">{{ flash }}</span>
+    <div class="alert">
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+      <strong>Warning!</strong> {{ flash }}
+    </div>
   {% endfor %}
-  <ul>
-  {% for todo in todos %}
-    <li>
-      {{ todo.text }} <a href="?op=delete&key={{ todo.key() }}">(-)</a>
-    </li>
-  {% endfor %}
-  </ul>
-  <form method="post" action="/">
-    <label>
-      <input size="50" name="text"/>
-    </label>
-    <input type="submit" name="op" value="add">
+
+  <!-- Show add form -->
+  <form class="navbar-form pull-left" method="post" action="/">
+    <input type="text" size="50" class="input-large" name="text">
+    <input type="submit" name="op" class="btn" value="add">
   </form>
-</body></html>
+
+  <!-- Show todo items -->
+  {% if todos.count() %}
+    <table class='table'>
+      <thead><tr><th>Todo List</th></tr></thead>
+      <tbody>
+      {% for todo in todos %}
+        <tr>
+          <td>{{ todo.text }}</td>
+          <td><a class="btn-danger" href="?op=delete&key={{ todo.key() }}">Delete</a></td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <div class="span7 offset1 well well-small">
+      There is no items in todo list!
+    </div>
+  {% endif %}
+<div class="container"></body></html>
