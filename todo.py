@@ -41,7 +41,7 @@ class BaseHandler(webapp2.RequestHandler):
 class TodoPage(BaseHandler):
   warning = None
 
-  def get(self): # delete request
+  def get(self):
     user = users.get_current_user()
     if not user:
       self.redirect(users.create_login_url(self.request.uri))
@@ -51,22 +51,20 @@ class TodoPage(BaseHandler):
       todo = db.get(key)
       todo_text = todo.text
       todo.delete()
-      self.session.setdefault('warnings', []).append('Deleted: %s' % todo_text)
+      self.session.add_flash('Deleted: %s' % todo_text)
       return self.redirect('/')
     template_values = {
       'todos': Todo.all(),
-      'warnings': self.session.get('warnings', []),
+      'flashes': self.session.get_flashes(),
       }
     self.response.out.write(self.render_response('index.html', **template_values))
-    self.session['warnings'] = []
 
   def post(self): # add request
-    # buraya post isleme verileri gelecek
     if cgi.escape(self.request.get('op')) == "add":
       text = self.request.get('text')
       todo = Todo(text = cgi.escape(text))
       todo.put()
-      self.session.setdefault('warnings', []).append('Added: %s' % text)
+      self.session.add_flash('Added: %s' % text)
     return self.redirect('/')
 
 config = {}
