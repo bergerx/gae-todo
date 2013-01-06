@@ -6,8 +6,9 @@ from webapp2_extras import jinja2, sessions
 
 class Todo(db.Model):
   text = db.StringProperty()
+  details = db.TextProperty()
+  user = db.UserProperty(auto_current_user=True)
   createdate = db.DateTimeProperty(auto_now_add=True)
-  deletedate = db.DateTimeProperty()
 
 class BaseHandler(webapp2.RequestHandler):
 
@@ -39,33 +40,48 @@ class BaseHandler(webapp2.RequestHandler):
 
 
 class TodoPage(BaseHandler):
-  warning = None
+
+  def _add(self):
+    todo = Todo(
+      text=cgi.escape(self.request.get('text')),
+      details=cgi.escape(self.request.get('details')),
+    )
+    todo.put()
+    self.session.add_flash('Added: new note.')
+    return self.redirect('/')
+
+  def _delete(self):
+    key_name = self.request.get('key')
+    key = db.Key(key_name)
+    db.get(key).delete()
+    self.session.add_flash('Deletedtodo item')
+    return self.redirect('/')
+
+  def _list(self):
+    todos = Todo.all()
+    user = users.get_current_user()
+    todos.filter('user =', user)
+    template_values = {
+      'todos': todos,
+      'flashes': self.session.get_flashes(),
+      'logout_url': users.create_logout_url('/'),
+    }
+    return self.render_response('index.html', **template_values)
 
   def get(self):
     user = users.get_current_user()
     if not user:
-      self.redirect(users.create_login_url(self.request.uri))
+      return self.redirect(users.create_login_url(self.request.uri))
     if cgi.escape(self.request.get('op')) == "delete":
-      key_name = self.request.get('key')
-      key = db.Key(key_name)
-      todo = db.get(key)
-      todo_text = todo.text
-      todo.delete()
-      self.session.add_flash('Deleted: %s' % todo_text)
-      self.redirect('/')
-      return
-    template_values = {
-      'todos': Todo.all(),
-      'flashes': self.session.get_flashes(),
-      }
-    return self.render_response('index.html', **template_values)
+      return self._delete()
+    return self._list()
 
   def post(self): # add request
+    user = users.get_current_user()
+    if not user:
+      return self.redirect(users.create_login_url(self.request.uri))
     if cgi.escape(self.request.get('op')) == "add":
-      text = self.request.get('text')
-      todo = Todo(text = cgi.escape(text))
-      todo.put()
-      self.session.add_flash('Added: %s' % text)
+      return self._add()
     return self.redirect('/')
 
 config = {}

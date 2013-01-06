@@ -1,0 +1,6 @@
+* if written something into add-form ignore/ask before hide-add-form
+* show item detail and actions when click to it
+* implement vim like navigation support - https://github.com/ma2shita/cursor-jquery-plugin
+* filterable todo items should be good
+* make table items sortable - http://isocra.com/2008/02/table-drag-and-drop-jQuery-plugin/
+* inline edit - http://tool-man.org/ToolManDHTML/edit-in-place.html

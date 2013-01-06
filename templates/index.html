@@ -5,9 +5,33 @@
   <link href="/css/bootstrap.css" rel="stylesheet" media="screen">
 </head>
 <body class="span10">
-<div class="span10 container">
-  <script src="/js/jquery-latest.js"></script>
-  <script src="/js/bootstrap.js"></script>
+<script src="/js/jquery-latest.js"></script>
+<script src="/js/bootstrap.js"></script>
+
+<!-- Show navbar -->
+<div class="navbar navbar-fixed-top">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="/">Todo</a>
+      <div id="main-menu" class="nav-collapse">
+        <ul id="main-menu-left" class="nav">
+          <li><a href="#" onclick="return false;" class="show-add-form">Add</a></li>
+          <li><a href="#" onclick="return false;" class="show-list">List</a></li>
+        </ul>
+        <ul id="main-menu-right" class="nav pull-right">
+          <li>
+            <a href="{{ logout_url }}" rel="tooltip" >
+              Logout <i class="icon-off"></i>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="span10 container" style='margin-top: 35pt'>
   <h1>Todo List</h1>
 
   <!-- Show flashes -->
@@ -19,27 +43,65 @@
   {% endfor %}
 
   <!-- Show add form -->
-  <form id="add-form" method="post" action="/">
+  <form id="add-form" class="span9" method="post" action="/">
+    <button type="button" class="close default-hidden hide hide-add-form">&times;</button>
     <fieldset>
       <legend class="default-hidden hide">Add New Todo Item</legend>
-      <input id="addbox" type="text" size="50" class="input"
-             name="text" placeholder="Write new todo item here">
-      <span class="help-block"></span>
-      <textarea class="default-hidden hide input-xxlarge" placeholder="More details about item."
-                name="details"></textarea>
-      <span class="help-block"></span>
-      <button class="default-hidden hide btn" type="submit" name="op"  value="add">Submit</button>
-      <button id="cancel-btn" class="default-hidden hide btn" type="reset" name="op"  value="add">Cancel</button>
+      <input type="text" size="50" class="input-xxlarge show-add-form"
+             name="text" placeholder="Write new todo item here"
+             autocomplete="off" id="add-box">
+      <div id="hider-div" >
+        <span class="help-block"></span>
+        <textarea placeholder="More details about item." name="details"
+                  class="default-hidden hide input-xxlarge"></textarea>
+        <span class="help-block"></span>
+        <button type="submit" name="op" value="add"
+                class="default-hidden hide btn">Submit </button>
+        <button type="reset"
+                class="default-hidden hide btn hide-add-form">Cancel</button>
+      </div>
     </fieldset>
   </form>
 
   <script>
-    $('#addbox').focusin(function () {
-      $('#add-form .default-hidden').slideDown('slow');
+    var add_box_shown=0;
+
+    function show_add_form() {
+      if (add_box_shown != 1) {
+        $('#hider-div').show();
+        $('#add-form .default-hidden').slideDown('slow');
+        add_box_shown = 1;
+      }
+      $('html, body').animate({
+        scrollTop: $('#add-form').offset().top - $('.navbar-fixed-top').height()
+      }, 500, function () {
+        $('#add-box').focus();
+      });
+    }
+
+    function hide_add_form() {
+      if (add_box_shown == 1) {
+        $('#hider-div, legend.default-hidden').slideUp('slow', function () {
+          $('#add-form .default-hidden').hide();
+        })
+        $('#add-box').blur();
+        add_box_shown = 0;
+      }
+    }
+
+    $('.show-add-form').click(show_add_form).keyup(function(e) {
+      if (e.keyCode == 27) { // esc
+        hide_add_form();
+      }
     });
-    $('#cancel-btn').click(function () {
-      $('#add-form .default-hidden').slideUp('slow');
-    })
+
+    $('.hide-add-form').click(hide_add_form);
+
+    $('.show-list').click(function () {
+      $('html, body').animate({
+        scrollTop: $('.table').offset().top - $('.navbar-fixed-top').height()
+      }, 500)
+    });
   </script>
 
   <!-- Show todo items -->
