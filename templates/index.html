@@ -1,7 +1,8 @@
 <html><head></head><body>
-  {% if warning %}
+  {% for warning in warnings %}
+    {% if not loop.first %}<br>{% endif %}
     <span style="color: red; ">{{ warning }}</span>
-  {% endif %}
+  {% endfor %}
   <ul>
   {% for todo in todos %}
     <li>
@@ -11,7 +12,9 @@
   {% endfor %}
   </ul>
   <form method="post" action="/">
-    <input size="50" name="text" />
+    <label>
+      <input size="50" name="text"/>
+    </label>
     <input type="submit" name="op" value="add">
   </form>
 </body></html>
