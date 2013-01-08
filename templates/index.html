@@ -112,7 +112,7 @@
       {% for todo in todos %}
         <tr>
           <td>{{ todo.text }}</td>
-          <td><a class="btn-danger" href="?op=delete&key={{ todo.key() }}">Delete</a></td>
+          <td><a class="btn btn-mini btn-danger" href="?op=delete&key={{ todo.key() }}">Delete</a></td>
         </tr>
       {% endfor %}
       </tbody>
@@ -122,6 +122,6 @@
       There is no items in todo list!
     </div>
   {% endif %}
-
+</div>
 </body>
 </html>
