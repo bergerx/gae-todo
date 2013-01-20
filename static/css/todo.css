@@ -1,0 +1,14 @@
+.item {
+  padding: 8px;
+  line-height: 20px;
+  border-top: 1px solid #DDD;
+}
+.text {
+  font-size: 1.2em;
+}
+.detail {
+  font-size: 1em;
+}
+body > div.container {
+    padding-top: 40px;
+}

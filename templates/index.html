@@ -3,13 +3,14 @@
 <head>
   <title>Simple Todo List</title>
   <link href="/css/bootstrap.css" rel="stylesheet" media="screen">
+  <link href="/css/todo.css" rel="stylesheet" media="screen">
 </head>
-<body class="span10">
+<body>
 <script src="/js/jquery-latest.js"></script>
 <script src="/js/bootstrap.js"></script>
 
 <!-- Show navbar -->
-<div class="navbar navbar-fixed-top">
+<div class="navbar navbar-fixed-top navbar-inverse">
   <div class="navbar-inner">
     <div class="container">
       <a class="brand" href="/">Todo</a>
@@ -21,7 +22,7 @@
         <ul id="main-menu-right" class="nav pull-right">
           <li>
             <a href="{{ logout_url }}" rel="tooltip" >
-              Logout <i class="icon-off"></i>
+              Logout <i class="icon-off icon-white"></i>
             </a>
           </li>
         </ul>
@@ -30,8 +31,7 @@
   </div>
 </div>
 
-
-<div class="span10 container" style='margin-top: 35pt'>
+<div class="container">
   <h1>Todo List</h1>
 
   <!-- Show flashes -->
@@ -63,65 +63,37 @@
     </fieldset>
   </form>
 
-  <script>
-    var add_box_shown=0;
-
-    function show_add_form() {
-      if (add_box_shown != 1) {
-        $('#hider-div').show();
-        $('#add-form .default-hidden').slideDown('slow');
-        add_box_shown = 1;
-      }
-      $('html, body').animate({
-        scrollTop: $('#add-form').offset().top - $('.navbar-fixed-top').height()
-      }, 500, function () {
-        $('#add-box').focus();
-      });
-    }
-
-    function hide_add_form() {
-      if (add_box_shown == 1) {
-        $('#hider-div, legend.default-hidden').slideUp('slow', function () {
-          $('#add-form .default-hidden').hide();
-        })
-        $('#add-box').blur();
-        add_box_shown = 0;
-      }
-    }
-
-    $('.show-add-form').click(show_add_form).keyup(function(e) {
-      if (e.keyCode == 27) { // esc
-        hide_add_form();
-      }
-    });
-
-    $('.hide-add-form').click(hide_add_form);
-
-    $('.show-list').click(function () {
-      $('html, body').animate({
-        scrollTop: $('.table').offset().top - $('.navbar-fixed-top').height()
-      }, 500)
-    });
-  </script>
-
   <!-- Show todo items -->
   {% if todos.count() %}
-    <table class='table'>
-      <thead><tr><th>Todo List</th></tr></thead>
-      <tbody>
+    <ul class="span10 items unstyled">
       {% for todo in todos %}
-        <tr>
-          <td>{{ todo.text }}</td>
-          <td><a class="btn btn-mini btn-danger" href="?op=delete&key={{ todo.key() }}">Delete</a></td>
-        </tr>
+      <li class="row item">
+        <div class="row text">
+          <div class="span10">
+            {{ todo.text }}
+          </div>
+        </div>
+        <div class="row detail hide">
+          <div class="span9">
+            {{ todo.details }}
+          </div>
+          <div class="span1">
+            <a class="btn btn-mini btn-danger"
+               href="?op=delete&key={{ todo.key() }}">
+              Delete
+            </a>
+          </div>
+        </div>
+      </li>
       {% endfor %}
-      </tbody>
-    </table>
+    </ul>
   {% else %}
     <div class="span7 offset1 well well-small">
       There is no items in todo list!
     </div>
   {% endif %}
+
 </div>
+<script src="/js/todo.js"></script>
 </body>
 </html>
